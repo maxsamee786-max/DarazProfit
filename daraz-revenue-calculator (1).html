@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daraz Munafa Calculator — Revenue & Profit Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#142319;
+    --ink-soft:#1c3024;
+    --paper:#fbf8f1;
+    --paper-edge:#e9e2d2;
+    --profit:#1f7a4d;
+    --profit-soft:#e4f3ea;
+    --loss:#c0392b;
+    --loss-soft:#fbe7e4;
+    --gold:#d9a441;
+    --gold-soft:#faf0dc;
+    --muted:#867a6a;
+    --line:#cdbfa3;
+    --display: 'Fraunces', serif;
+    --body: 'Manrope', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 12% 8%, rgba(217,164,65,0.10), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(31,122,77,0.12), transparent 45%),
+      var(--ink);
+    font-family:var(--body);
+    color:var(--paper);
+    min-height:100vh;
+    padding:48px 20px 90px;
+  }
+  .wrap{max-width:1040px;margin:0 auto;}
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--gold);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--gold);display:inline-block;}
+
+  h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(28px,4.4vw,44px);
+    line-height:1.08;
+    margin:0 0 10px;
+    color:var(--paper);
+  }
+  h1 em{font-style:italic;font-weight:500;color:var(--gold);}
+  .sub{
+    font-size:15px;
+    color:#bfd3c4;
+    max-width:560px;
+    line-height:1.55;
+    margin:0 0 28px;
+  }
+  .rates-note{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(217,164,65,0.10);
+    border:1px solid rgba(217,164,65,0.30);
+    color:#e8c98a;
+    font-size:11.5px;
+    padding:7px 13px;
+    border-radius:30px;
+    margin-bottom:36px;
+  }
+  .rates-note .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex:none;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+    align-items:start;
+  }
+  @media (max-width:840px){
+    .grid{grid-template-columns:1fr;}
+  }
+
+  /* INPUT CARD */
+  .card{
+    background:var(--ink-soft);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:18px;
+    padding:28px 26px 24px;
+    margin-bottom:22px;
+  }
+  .card h2{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#9fb6a6;
+    margin:0 0 18px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .card h2 .tag{
+    background:rgba(217,164,65,0.14);
+    color:var(--gold);
+    padding:2px 8px;
+    border-radius:20px;
+    font-size:10px;
+    letter-spacing:0.06em;
+  }
+  .field-group{margin-bottom:18px;}
+  .field-group:last-child{margin-bottom:0;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  label{
+    display:block;
+    font-size:12.5px;
+    color:#c7d8cc;
+    margin-bottom:6px;
+    font-weight:600;
+  }
+  label .hint{
+    display:block;
+    font-weight:400;
+    color:var(--muted);
+    font-size:11px;
+    margin-top:2px;
+  }
+  .input-shell{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .input-shell .prefix{
+    position:absolute;
+    left:13px;
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--muted);
+    pointer-events:none;
+  }
+  .input-shell .suffix{
+    position:absolute;
+    right:13px;
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--muted);
+    pointer-events:none;
+  }
+  input[type=number], input[type=text]{
+    width:100%;
+    background:#0f1c14;
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:10px;
+    color:var(--paper);
+    font-family:var(--mono);
+    font-size:14.5px;
+    padding:11px 13px;
+    outline:none;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  input[type=text]{font-family:var(--body);}
+  input.has-prefix{padding-left:30px;}
+  input.has-suffix{padding-right:30px;}
+  input:focus{border-color:var(--gold);background:#13231a;}
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+
+  select{
+    width:100%;
+    background:#0f1c14;
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:10px;
+    color:var(--paper);
+    font-family:var(--body);
+    font-size:13.5px;
+    padding:11px 13px;
+    outline:none;
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d9a441' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 14px center;
+    padding-right:34px;
+  }
+
+  hr.div{
+    border:none;
+    border-top:1px dashed rgba(255,255,255,0.12);
+    margin:22px 0;
+  }
+
+  .btn{
+    font-family:var(--body);
+    font-weight:700;
+    font-size:12.5px;
+    letter-spacing:0.02em;
+    border:none;
+    border-radius:9px;
+    padding:10px 16px;
+    cursor:pointer;
+    transition:transform .12s ease, opacity .12s ease;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-gold{background:var(--gold);color:#23180a;}
+  .btn-gold:hover{opacity:0.92;}
+  .btn-ghost{background:rgba(255,255,255,0.07);color:var(--paper);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.12);}
+  .btn-sm{padding:6px 11px;font-size:11px;border-radius:7px;}
+  .btn-block{width:100%;}
+
+  .suggest-box{
+    background:#0f1c14;
+    border:1px dashed rgba(217,164,65,0.45);
+    border-radius:12px;
+    padding:14px 16px;
+    margin-top:4px;
+  }
+  .suggest-box .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+  .suggest-box .label{font-size:12px;color:#c7d8cc;}
+  .suggest-box .price{font-family:var(--mono);font-weight:700;font-size:17px;color:var(--gold);}
+  .suggest-box .msg{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5;}
+
+  /* RECEIPT */
+  .receipt-outer{
+    background:var(--paper);
+    border-radius:4px;
+    position:relative;
+    box-shadow:0 30px 60px -25px rgba(0,0,0,0.55);
+    animation:print-in .55s cubic-bezier(.2,.8,.2,1);
+    transform-origin:top center;
+  }
+  @keyframes print-in{
+    from{opacity:0;transform:translateY(-14px) scaleY(0.97);}
+    to{opacity:1;transform:translateY(0) scaleY(1);}
+  }
+  .perf{
+    height:10px;
+    background-image:radial-gradient(circle, var(--ink) 3.5px, transparent 3.6px);
+    background-size:16px 16px;
+    background-position:4px center;
+    background-repeat:repeat-x;
+  }
+  .perf.top{border-radius:4px 4px 0 0;}
+  .perf.bottom{border-radius:0 0 4px 4px;}
+
+  .receipt{
+    padding:26px 24px 22px;
+    font-family:var(--mono);
+    color:#2b2620;
+  }
+  .r-head{text-align:center;margin-bottom:18px;}
+  .r-head .biz{
+    font-family:var(--body);
+    font-weight:800;
+    font-size:15px;
+    letter-spacing:0.04em;
+    color:var(--ink);
+  }
+  .r-head .biz-sub{
+    font-size:10.5px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-top:3px;
+  }
+
+  .r-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    padding:5px 0;
+    color:#3a342a;
+  }
+  .r-line .lbl{color:#5b5345;}
+  .r-line .val{font-weight:500;}
+  .r-line.neg .val{color:var(--loss);}
+  .r-line.bold .lbl, .r-line.bold .val{font-weight:700;color:var(--ink);}
+
+  .r-rule{border-top:1px dashed var(--line);margin:10px 0;}
+  .r-rule.solid{border-top:1.5px solid var(--ink);}
+
+  .r-total{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:2px solid var(--ink);
+  }
+  .r-total .lbl{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+  .r-total .val{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:24px;
+    transition:color .2s ease;
+  }
+  .r-total .val.profit{color:var(--profit);}
+  .r-total .val.loss{color:var(--loss);}
+
+  .r-meta{
+    display:flex;
+    justify-content:space-between;
+    margin-top:10px;
+    font-size:11.5px;
+    color:var(--muted);
+  }
+
+  .stamp{
+    margin:18px auto 4px;
+    width:fit-content;
+    border:2px solid;
+    border-radius:6px;
+    padding:5px 16px;
+    font-family:var(--body);
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    transform:rotate(-2deg);
+  }
+  .stamp.healthy{color:var(--profit);border-color:var(--profit);background:var(--profit-soft);}
+  .stamp.tight{color:#9a6b15;border-color:var(--gold);background:var(--gold-soft);}
+  .stamp.loss{color:var(--loss);border-color:var(--loss);background:var(--loss-soft);}
+
+  .breakeven{
+    margin-top:18px;
+    background:#f1ecdf;
+    border-radius:8px;
+    padding:11px 14px;
+    font-size:12px;
+    color:#5b5345;
+    text-align:center;
+    line-height:1.5;
+  }
+  .breakeven b{color:var(--ink);font-family:var(--mono);}
+
+  .monthly-panel{
+    margin-top:16px;
+    border-top:1px dashed var(--line);
+    padding-top:14px;
+  }
+  .monthly-panel .mp-title{
+    font-family:var(--body);
+    font-size:10.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+    text-align:center;
+  }
+  .mp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .mp-cell{
+    background:#f1ecdf;
+    border-radius:8px;
+    padding:9px 10px;
+    text-align:center;
+  }
+  .mp-cell .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;}
+  .mp-cell .v{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--ink);margin-top:2px;}
+  .mp-cell.profit .v{color:var(--profit);}
+
+  .footnote{
+    text-align:center;
+    font-family:var(--body);
+    font-size:10.5px;
+    color:var(--muted);
+    margin-top:14px;
+    line-height:1.5;
+    padding:0 6px;
+  }
+
+  .save-row{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
+  }
+
+  /* SAVED PRODUCTS TABLE */
+  .saved-section{
+    background:var(--ink-soft);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:18px;
+    padding:26px;
+    margin-top:28px;
+  }
+  .saved-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .saved-head h2{
+    font-family:var(--display);
+    font-size:19px;
+    font-weight:600;
+    margin:0;
+    color:var(--paper);
+  }
+  .saved-head .count{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:3px;}
+  .saved-actions{display:flex;gap:8px;}
+
+  .table-wrap{overflow-x:auto;}
+  table.saved-table{
+    width:100%;
+    border-collapse:collapse;
+    font-family:var(--mono);
+    font-size:12.5px;
+    min-width:680px;
+  }
+  table.saved-table th{
+    text-align:left;
+    font-family:var(--body);
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#9fb6a6;
+    padding:0 10px 10px;
+    border-bottom:1px solid rgba(255,255,255,0.10);
+    font-weight:700;
+  }
+  table.saved-table td{
+    padding:11px 10px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    color:#e3ece6;
+  }
+  table.saved-table tr:last-child td{border-bottom:none;}
+  table.saved-table td.name{font-family:var(--body);font-weight:600;color:var(--paper);}
+  table.saved-table td.cat{color:#9fb6a6;font-family:var(--body);font-size:11.5px;}
+  td.profit-pos{color:#5fd394;font-weight:700;}
+  td.profit-neg{color:#f08a7d;font-weight:700;}
+  .row-stamp{
+    display:inline-block;
+    font-family:var(--body);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:0.06em;
+    padding:2px 8px;
+    border-radius:20px;
+    text-transform:uppercase;
+  }
+  .row-stamp.healthy{background:var(--profit-soft);color:var(--profit);}
+  .row-stamp.tight{background:var(--gold-soft);color:#9a6b15;}
+  .row-stamp.loss{background:var(--loss-soft);color:var(--loss);}
+  .del-btn{
+    background:none;border:none;color:#867a6a;cursor:pointer;font-size:15px;
+    line-height:1;padding:4px;
+  }
+  .del-btn:hover{color:#f08a7d;}
+
+  .saved-empty{
+    text-align:center;
+    padding:30px 10px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+  }
+
+  /* sticky mobile bar */
+  .sticky-bar{
+    display:none;
+    position:fixed;
+    left:0;right:0;bottom:0;
+    background:var(--ink-soft);
+    border-top:1px solid rgba(255,255,255,0.12);
+    padding:12px 18px;
+    align-items:center;
+    justify-content:space-between;
+    z-index:20;
+    font-family:var(--mono);
+  }
+  .sticky-bar .lbl{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9fb6a6;}
+  .sticky-bar .val{font-size:18px;font-weight:700;}
+  .sticky-bar .val.profit{color:#5fd394;}
+  .sticky-bar .val.loss{color:#f08a7d;}
+  @media (max-width:840px){
+    .sticky-bar{display:flex;}
+    body{padding-bottom:96px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Pricing Tool · Daraz Pakistan</div>
+  <h1>Listing se pehlay,<br><em>apna asal munafa</em> dekh lein.</h1>
+  <p class="sub">Cost, selling price aur category daalein — calculator khud commission, GST, aur fees nikal kar batayega ke aapki jeib mein kya bachta hai, aur kis price par bechna sahi rahega.</p>
+  <div class="rates-note"><span class="dot"></span>30+ categories ki estimated commission rates shamil hain — apni exact rate Seller Center se confirm zaroor karein.</div>
+
+  <div class="grid">
+
+    <!-- LEFT: INPUTS -->
+    <div>
+      <div class="card">
+        <h2>Product</h2>
+        <div class="field-group">
+          <label>Product Name<span class="hint">comparison list mein dikhane ke liye (optional)</span></label>
+          <input type="text" id="productName" placeholder="e.g. Wireless Earbuds">
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Cost Price<span class="hint">laagat per unit</span></label>
+            <div class="input-shell">
+              <span class="prefix">Rs</span>
+              <input type="number" id="costPrice" class="has-prefix" value="700" min="0" step="1">
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Selling Price<span class="hint">Daraz par listed price</span></label>
+            <div class="input-shell">
+              <span class="prefix">Rs</span>
+              <input type="number" id="sellingPrice" class="has-prefix" value="1999" min="0" step="1">
+            </div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Category<span class="hint">commission auto-fill ho jayegi</span></label>
+          <select id="categoryPreset">
+            <optgroup label="Fashion & Accessories">
+              <option value="10">Women's Clothing — ~10%</option>
+              <option value="10">Men's Clothing — ~10%</option>
+              <option value="9">Kids' Clothing — ~9%</option>
+              <option value="12">Shoes & Footwear — ~12%</option>
+              <option value="10">Bags & Travel — ~10%</option>
+              <option value="11">Jewelry & Watches — ~11%</option>
+              <option value="10">Sunglasses & Eyewear — ~10%</option>
+            </optgroup>
+            <optgroup label="Mobiles & Electronics">
+              <option value="4">Mobile Phones — ~4%</option>
+              <option value="11">Mobile Accessories — ~11%</option>
+              <option value="4">Laptops & Computers — ~4%</option>
+              <option value="8">Computer Accessories — ~8%</option>
+              <option value="5">Cameras — ~5%</option>
+              <option value="5">TV & Home Entertainment — ~5%</option>
+              <option value="4">Gaming (Consoles/Games) — ~4%</option>
+            </optgroup>
+            <optgroup label="Home & Living">
+              <option value="5">Large Appliances (Fridge/AC) — ~5%</option>
+              <option value="9">Small Kitchen Appliances — ~9%</option>
+              <option value="8">Furniture — ~8%</option>
+              <option value="9">Home Decor — ~9%</option>
+              <option value="7">Tools & Home Improvement — ~7%</option>
+            </optgroup>
+            <optgroup label="Health & Beauty">
+              <option value="9">Skincare & Cosmetics — ~9%</option>
+              <option value="8">Personal Care — ~8%</option>
+              <option value="8">Health Supplements — ~8%</option>
+              <option value="10">Fragrances — ~10%</option>
+            </optgroup>
+            <optgroup label="Groceries & Food">
+              <option value="3">Groceries & Pantry — ~3%</option>
+              <option value="3">Beverages — ~3%</option>
+            </optgroup>
+            <optgroup label="Babies & Toys">
+              <option value="8">Baby Care — ~8%</option>
+              <option value="9">Toys & Games — ~9%</option>
+            </optgroup>
+            <optgroup label="Sports & Outdoors">
+              <option value="8">Sports Equipment — ~8%</option>
+              <option value="8">Outdoor & Camping — ~8%</option>
+            </optgroup>
+            <optgroup label="Books & Office">
+              <option value="12">Books & Stationery — ~12%</option>
+              <option value="9">Office Supplies — ~9%</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="6">Motors & Accessories — ~6%</option>
+              <option value="18">Gift Items — ~18%</option>
+              <option value="8">Pet Supplies — ~8%</option>
+              <option value="custom" selected>Other / Custom</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Daraz Fees</h2>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Commission<span class="hint">category se auto-fill</span></label>
+            <div class="input-shell">
+              <input type="number" id="commissionPct" class="has-suffix" value="8" min="0" step="0.1">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Payment Fee<span class="hint">gateway charge</span></label>
+            <div class="input-shell">
+              <input type="number" id="paymentFeePct" class="has-suffix" value="1.5" min="0" step="0.1">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>GST / Tax<span class="hint">commission + fee par</span></label>
+            <div class="input-shell">
+              <input type="number" id="gstPct" class="has-suffix" value="18" min="0" step="0.1">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Fixed Handling Fee<span class="hint">har order par flat</span></label>
+            <div class="input-shell">
+              <span class="prefix">Rs</span>
+              <input type="number" id="fixedFee" class="has-prefix" value="20" min="0" step="1">
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Free Shipping Borne<span class="hint">agar aap pay karte hain</span></label>
+            <div class="input-shell">
+              <span class="prefix">Rs</span>
+              <input type="number" id="shippingSeller" class="has-prefix" value="0" min="0" step="1">
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Packaging<span class="hint">box, tape, label</span></label>
+            <div class="input-shell">
+              <span class="prefix">Rs</span>
+              <input type="number" id="packaging" class="has-prefix" value="30" min="0" step="1">
+            </div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Other Cost<span class="hint">ads, returns allowance, misc</span></label>
+          <div class="input-shell">
+            <span class="prefix">Rs</span>
+            <input type="number" id="otherCost" class="has-prefix" value="0" min="0" step="1">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Smart Suggestions <span class="tag">AUTO</span></h2>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Target Margin<span class="hint">aap kitna margin chahte hain</span></label>
+            <div class="input-shell">
+              <input type="number" id="targetMarginPct" class="has-suffix" value="20" min="0" max="95" step="1">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Monthly Units Sold<span class="hint">monthly profit dekhne ke liye</span></label>
+            <input type="number" id="monthlyUnits" value="0" min="0" step="1">
+          </div>
+        </div>
+        <div class="suggest-box">
+          <div class="row">
+            <span class="label">Suggested price for <span id="targetLabel">20</span>% margin</span>
+            <span class="price" id="suggestedPrice">Rs 0.00</span>
+          </div>
+          <button class="btn btn-gold btn-sm" id="applySuggestedBtn" style="margin-top:10px;">Use This Price</button>
+          <div class="msg" id="suggestMsg"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RECEIPT -->
+    <div>
+      <div class="receipt-outer">
+        <div class="perf top"></div>
+        <div class="receipt">
+          <div class="r-head">
+            <div class="biz">DARAZ SETTLEMENT — ESTIMATE</div>
+            <div class="biz-sub">per unit breakdown</div>
+          </div>
+
+          <div class="r-line bold"><span class="lbl">Selling Price</span><span class="val" id="rSelling">Rs 0.00</span></div>
+          <div class="r-rule"></div>
+          <div class="r-line neg"><span class="lbl">− Commission (<span id="rCommPct">0</span>%)</span><span class="val" id="rComm">-Rs 0.00</span></div>
+          <div class="r-line neg"><span class="lbl">− Payment Fee (<span id="rPayPct">0</span>%)</span><span class="val" id="rPay">-Rs 0.00</span></div>
+          <div class="r-line neg"><span class="lbl">− GST on Fees (<span id="rGstPct">0</span>%)</span><span class="val" id="rGst">-Rs 0.00</span></div>
+          <div class="r-line neg"><span class="lbl">− Fixed Handling Fee</span><span class="val" id="rFixed">-Rs 0.00</span></div>
+          <div class="r-rule solid"></div>
+          <div class="r-line bold"><span class="lbl">Daraz Payout</span><span class="val" id="rPayout">Rs 0.00</span></div>
+
+          <div class="r-rule" style="margin-top:14px;"></div>
+          <div class="r-line neg"><span class="lbl">− Cost Price</span><span class="val" id="rCost">-Rs 0.00</span></div>
+          <div class="r-line neg"><span class="lbl">− Packaging</span><span class="val" id="rPack">-Rs 0.00</span></div>
+          <div class="r-line neg"><span class="lbl">− Shipping (you pay)</span><span class="val" id="rShip">-Rs 0.00</span></div>
+          <div class="r-line neg"><span class="lbl">− Other Cost</span><span class="val" id="rOther">-Rs 0.00</span></div>
+
+          <div class="r-total">
+            <span class="lbl">Net Profit</span>
+            <span class="val" id="rNet">Rs 0.00</span>
+          </div>
+          <div class="r-meta">
+            <span>Margin: <b id="rMargin" style="color:var(--ink)">0%</b></span>
+            <span>ROI: <b id="rRoi" style="color:var(--ink)">0%</b></span>
+          </div>
+
+          <div class="stamp healthy" id="rStamp">HEALTHY</div>
+
+          <div class="breakeven">
+            Break-even selling price: <b id="rBreakeven">Rs 0.00</b><br>
+            Iss se neeche bechne par aap loss mein chalay jayenge.
+          </div>
+
+          <div class="monthly-panel" id="monthlyPanel" style="display:none;">
+            <div class="mp-title">Monthly Projection</div>
+            <div class="mp-grid">
+              <div class="mp-cell"><div class="k">Revenue</div><div class="v" id="mRevenue">Rs 0</div></div>
+              <div class="mp-cell"><div class="k">Daraz Fees</div><div class="v" id="mFees">Rs 0</div></div>
+              <div class="mp-cell"><div class="k">Your Costs</div><div class="v" id="mCosts">Rs 0</div></div>
+              <div class="mp-cell profit"><div class="k">Net Profit</div><div class="v" id="mProfit">Rs 0</div></div>
+            </div>
+          </div>
+
+          <div class="footnote">*Tamam rates estimate hain. Apni exact category commission Daraz Seller Center → Fee Structure se zaroor confirm karein.</div>
+        </div>
+        <div class="perf bottom"></div>
+      </div>
+
+      <div class="save-row">
+        <button class="btn btn-gold btn-block" id="saveProductBtn">+ Save to Comparison List</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SAVED PRODUCTS -->
+  <div class="saved-section">
+    <div class="saved-head">
+      <div>
+        <h2>Comparison List</h2>
+        <div class="count" id="savedCount">0 products saved</div>
+      </div>
+      <div class="saved-actions">
+        <button class="btn btn-ghost btn-sm" id="exportCsvBtn">Export CSV</button>
+        <button class="btn btn-ghost btn-sm" id="clearAllBtn">Clear All</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="saved-table" id="savedTable">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Cost</th>
+            <th>Price</th>
+            <th>Margin</th>
+            <th>Net Profit</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="savedTableBody"></tbody>
+      </table>
+      <div class="saved-empty" id="savedEmpty">Abhi koi product save nahi hua. Calculate karne ke baad "Save to Comparison List" dabayein taake apne saray products ek jagah compare kar sakein.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="sticky-bar">
+  <span class="lbl">Net Profit / unit</span>
+  <span class="val profit" id="stickyNet">Rs 0.00</span>
+</div>
+
+<script>
+  const ids = ['costPrice','sellingPrice','commissionPct','paymentFeePct','gstPct','fixedFee','shippingSeller','packaging','otherCost','targetMarginPct','monthlyUnits'];
+  const el = {};
+  ids.forEach(id => el[id] = document.getElementById(id));
+  const presetSelect = document.getElementById('categoryPreset');
+  const productNameInput = document.getElementById('productName');
+
+  function num(id){ return parseFloat(el[id].value) || 0; }
+  function fmt(n){
+    const sign = n < 0 ? '-' : '';
+    return sign + 'Rs ' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtWhole(n){
+    const sign = n < 0 ? '-' : '';
+    return sign + 'Rs ' + Math.abs(Math.round(n)).toLocaleString('en-US');
+  }
+
+  let lastCalc = null;
+
+  function calc(){
+    const cost = num('costPrice');
+    const price = num('sellingPrice');
+    const commPct = num('commissionPct') / 100;
+    const payPct = num('paymentFeePct') / 100;
+    const gstPct = num('gstPct') / 100;
+    const fixedFee = num('fixedFee');
+    const shipSeller = num('shippingSeller');
+    const packaging = num('packaging');
+    const other = num('otherCost');
+    const targetMargin = num('targetMarginPct') / 100;
+    const monthlyUnits = num('monthlyUnits');
+
+    const commAmt = price * commPct;
+    const payAmt = price * payPct;
+    const gstAmt = (commAmt + payAmt) * gstPct;
+    const totalDarazFees = commAmt + payAmt + gstAmt + fixedFee;
+    const payout = price - totalDarazFees;
+
+    const totalSellerCost = cost + packaging + shipSeller + other;
+    const netProfit = payout - totalSellerCost;
+
+    const margin = price > 0 ? (netProfit / price) * 100 : 0;
+    const investedBase = cost + packaging + shipSeller + other;
+    const roi = investedBase > 0 ? (netProfit / investedBase) * 100 : 0;
+
+    // break-even price
+    const feeRate = commPct + payPct + gstPct * (commPct + payPct);
+    const fixedSide = fixedFee + cost + packaging + shipSeller + other;
+    const breakeven = (1 - feeRate) > 0 ? fixedSide / (1 - feeRate) : 0;
+
+    // target margin suggested price
+    const denomTarget = 1 - feeRate - targetMargin;
+    const suggestedPrice = denomTarget > 0 ? fixedSide / denomTarget : null;
+
+    document.getElementById('rSelling').textContent = fmt(price);
+    document.getElementById('rCommPct').textContent = num('commissionPct').toFixed(1).replace(/\.0$/,'');
+    document.getElementById('rComm').textContent = fmt(-commAmt);
+    document.getElementById('rPayPct').textContent = num('paymentFeePct').toFixed(1).replace(/\.0$/,'');
+    document.getElementById('rPay').textContent = fmt(-payAmt);
+    document.getElementById('rGstPct').textContent = num('gstPct').toFixed(1).replace(/\.0$/,'');
+    document.getElementById('rGst').textContent = fmt(-gstAmt);
+    document.getElementById('rFixed').textContent = fmt(-fixedFee);
+    document.getElementById('rPayout').textContent = fmt(payout);
+
+    document.getElementById('rCost').textContent = fmt(-cost);
+    document.getElementById('rPack').textContent = fmt(-packaging);
+    document.getElementById('rShip').textContent = fmt(-shipSeller);
+    document.getElementById('rOther').textContent = fmt(-other);
+
+    const rNet = document.getElementById('rNet');
+    const stickyNet = document.getElementById('stickyNet');
+    rNet.textContent = fmt(netProfit);
+    stickyNet.textContent = fmt(netProfit);
+    rNet.className = 'val ' + (netProfit >= 0 ? 'profit' : 'loss');
+    stickyNet.className = 'val ' + (netProfit >= 0 ? 'profit' : 'loss');
+
+    document.getElementById('rMargin').textContent = margin.toFixed(1) + '%';
+    document.getElementById('rRoi').textContent = roi.toFixed(1) + '%';
+    document.getElementById('rBreakeven').textContent = fmt(breakeven);
+
+    let stampClass, stampText;
+    if (margin < 0) { stampClass='loss'; stampText='LOSS'; }
+    else if (margin < 15) { stampClass='tight'; stampText='TIGHT MARGIN'; }
+    else { stampClass='healthy'; stampText='HEALTHY'; }
+    const stamp = document.getElementById('rStamp');
+    stamp.className = 'stamp ' + stampClass;
+    stamp.textContent = stampText;
+
+    // smart suggestion box
+    document.getElementById('targetLabel').textContent = num('targetMarginPct').toFixed(0);
+    const suggestEl = document.getElementById('suggestedPrice');
+    const suggestMsg = document.getElementById('suggestMsg');
+    if (suggestedPrice !== null) {
+      suggestEl.textContent = fmt(suggestedPrice);
+      const diff = suggestedPrice - price;
+      if (Math.abs(diff) < 1) {
+        suggestMsg.textContent = 'Aapki current price is target margin ke kareeb hai.';
+      } else if (diff > 0) {
+        suggestMsg.textContent = 'Price ' + fmtWhole(diff) + ' barhayein taake ' + num('targetMarginPct').toFixed(0) + '% margin mil sake.';
+      } else {
+        suggestMsg.textContent = 'Aap is target margin se ' + fmtWhole(-diff) + ' zyada wasool kar rahe hain — price kam bhi rakh sakte hain.';
+      }
+    } else {
+      suggestEl.textContent = 'Not possible';
+      suggestMsg.textContent = 'In fees ke sath yeh margin mumkin nahi — commission ya costs kam karein.';
+    }
+
+    // monthly projection
+    const monthlyPanel = document.getElementById('monthlyPanel');
+    if (monthlyUnits > 0) {
+      monthlyPanel.style.display = 'block';
+      document.getElementById('mRevenue').textContent = fmtWhole(price * monthlyUnits);
+      document.getElementById('mFees').textContent = fmtWhole(totalDarazFees * monthlyUnits);
+      document.getElementById('mCosts').textContent = fmtWhole(totalSellerCost * monthlyUnits);
+      const mProfitEl = document.getElementById('mProfit');
+      mProfitEl.textContent = fmtWhole(netProfit * monthlyUnits);
+    } else {
+      monthlyPanel.style.display = 'none';
+    }
+
+    lastCalc = {
+      name: productNameInput.value.trim() || ('Product ' + (loadSaved().length + 1)),
+      category: presetSelect.options[presetSelect.selectedIndex].text,
+      cost, price,
+      commission: num('commissionPct'),
+      netProfit, margin, stamp: stampText
+    };
+  }
+
+  ids.forEach(id => el[id].addEventListener('input', calc));
+  presetSelect.addEventListener('change', () => {
+    if (presetSelect.value !== 'custom') {
+      el.commissionPct.value = presetSelect.value;
+      calc();
+    }
+  });
+  document.getElementById('applySuggestedBtn').addEventListener('click', () => {
+    const txt = document.getElementById('suggestedPrice').textContent.replace(/[^0-9.]/g,'');
+    if (txt) { el.sellingPrice.value = Math.round(parseFloat(txt)); calc(); }
+  });
+
+  /* ---------- SAVED PRODUCTS (localStorage) ---------- */
+  const STORAGE_KEY = 'darazCalcSavedProducts';
+
+  function loadSaved(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch(e) { return []; }
+  }
+  function persistSaved(arr){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch(e) {}
+  }
+  function renderSaved(){
+    const rows = loadSaved();
+    const tbody = document.getElementById('savedTableBody');
+    const empty = document.getElementById('savedEmpty');
+    const table = document.getElementById('savedTable');
+    document.getElementById('savedCount').textContent = rows.length + (rows.length===1 ? ' product saved' : ' products saved');
+
+    if (!rows.length) {
+      table.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+    table.style.display = 'table';
+    empty.style.display = 'none';
+
+    tbody.innerHTML = '';
+    rows.forEach((r, i) => {
+      const tr = document.createElement('tr');
+      const stampClass = r.stamp === 'LOSS' ? 'loss' : (r.stamp === 'TIGHT MARGIN' ? 'tight' : 'healthy');
+      const profitClass = r.netProfit >= 0 ? 'profit-pos' : 'profit-neg';
+      tr.innerHTML =
+        '<td class="name">' + escapeHtml(r.name) + '</td>' +
+        '<td class="cat">' + escapeHtml(r.category) + '</td>' +
+        '<td>' + fmtWhole(r.cost) + '</td>' +
+        '<td>' + fmtWhole(r.price) + '</td>' +
+        '<td>' + r.margin.toFixed(1) + '%</td>' +
+        '<td class="' + profitClass + '">' + fmtWhole(r.netProfit) + '</td>' +
+        '<td><span class="row-stamp ' + stampClass + '">' + r.stamp + '</span></td>' +
+        '<td><button class="del-btn" data-i="' + i + '" title="Remove">✕</button></td>';
+      tbody.appendChild(tr);
+    });
+
+    tbody.querySelectorAll('.del-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.getAttribute('data-i'));
+        const arr = loadSaved();
+        arr.splice(i,1);
+        persistSaved(arr);
+        renderSaved();
+      });
+    });
+  }
+  function escapeHtml(s){
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  document.getElementById('saveProductBtn').addEventListener('click', () => {
+    if (!lastCalc) return;
+    const arr = loadSaved();
+    arr.push(lastCalc);
+    persistSaved(arr);
+    renderSaved();
+    productNameInput.value = '';
+  });
+  document.getElementById('clearAllBtn').addEventListener('click', () => {
+    if (confirm('Saray saved products delete kar dein?')) {
+      persistSaved([]);
+      renderSaved();
+    }
+  });
+  document.getElementById('exportCsvBtn').addEventListener('click', () => {
+    const rows = loadSaved();
+    if (!rows.length) return;
+    let csv = 'Product,Category,Cost Price,Selling Price,Commission %,Net Profit,Margin %,Status\n';
+    rows.forEach(r => {
+      csv += '"' + r.name.replace(/"/g,'""') + '","' + r.category.replace(/"/g,'""') + '",' +
+        r.cost + ',' + r.price + ',' + r.commission + ',' + r.netProfit.toFixed(2) + ',' + r.margin.toFixed(1) + ',' + r.stamp + '\n';
+    });
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'daraz-products-comparison.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  calc();
+  renderSaved();
+</script>
+</body>
+</html>
